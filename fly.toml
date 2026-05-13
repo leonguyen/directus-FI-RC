@@ -1,0 +1,41 @@
+# fly.toml – Directus on Fly.io
+
+app = "my-directus"
+
+primary_region = "sin"  # change to the region nearest you (e.g., "ams", "hkg", "sin")
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  # Directus core
+  PORT = "8055"
+  DB_CLIENT = "sqlite3"
+  DB_FILENAME = "/data/database/data.db"
+  PUBLIC_URL = "https://my-directus.fly.dev"
+
+  # Auth / admin setup
+  ADMIN_EMAIL = "admin@example.com"
+  ADMIN_PASSWORD = "changeme-immediately"  # set via `fly secrets` in production
+
+  # Extensions and filesystem
+  EXTENSIONS_AUTO_RELOAD = "true"
+  EXTENSIONS_PATH = "/data/extensions"
+  STORAGE_LOCAL_ROOT = "/data/uploads"
+
+[[mounts]]
+  source = "directus_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8055
+  force_https = true
+  auto_stop_machines = "off"
+  auto_start_machines = false
+  min_machines_running = 1
+  processes = ["app"]
+
+[[vm]]
+  memory = "1gb"
+  cpu_kind = "shared"
+  cpus = 1
