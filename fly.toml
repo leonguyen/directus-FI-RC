@@ -1,41 +1,39 @@
-# fly.toml – Directus on Fly.io
+# fly.toml app configuration file generated for directus-pi-vc on 2026-05-13T03:56:39Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-app = "my-directus"
-
-primary_region = "sin"  # change to the region nearest you (e.g., "ams", "hkg", "sin")
+app = 'directus-pi-vc'
+primary_region = 'sin'
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = 'Dockerfile'
 
 [env]
-  # Directus core
-  PORT = "8055"
-  DB_CLIENT = "sqlite3"
-  DB_FILENAME = "/data/database/data.db"
-  PUBLIC_URL = "https://my-directus.fly.dev"
-
-  # Auth / admin setup
-  ADMIN_EMAIL = "admin@example.com"
-  ADMIN_PASSWORD = "changeme-immediately"  # set via `fly secrets` in production
-
-  # Extensions and filesystem
-  EXTENSIONS_AUTO_RELOAD = "true"
-  EXTENSIONS_PATH = "/data/extensions"
-  STORAGE_LOCAL_ROOT = "/data/uploads"
+  ADMIN_EMAIL = 'admin@example.com'
+  ADMIN_PASSWORD = 'changeme-immediately'
+  DB_CLIENT = 'sqlite3'
+  DB_FILENAME = '/data/database/data.db'
+  EXTENSIONS_AUTO_RELOAD = 'true'
+  EXTENSIONS_PATH = '/data/extensions'
+  PORT = '8055'
+  PUBLIC_URL = 'https://my-directus.fly.dev'
+  STORAGE_LOCAL_ROOT = '/data/uploads'
 
 [[mounts]]
-  source = "directus_data"
-  destination = "/data"
+  source = 'directus_data'
+  destination = '/data'
 
 [http_service]
-  internal_port = 8055
+  internal_port = 8080
   force_https = true
-  auto_stop_machines = "off"
+  auto_stop_machines = 'off'
   auto_start_machines = false
   min_machines_running = 1
-  processes = ["app"]
+  processes = ['app']
 
 [[vm]]
-  memory = "1gb"
-  cpu_kind = "shared"
+  memory = '1gb'
+  cpu_kind = 'shared'
   cpus = 1
+  memory_mb = 1024
