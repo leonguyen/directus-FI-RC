@@ -1,0 +1,61 @@
+services:
+  - type: web
+    name: directus
+    env: docker
+    dockerCommand: npx directus bootstrap && npx directus start
+    envVars:
+      - key: DB_CLIENT
+        value: postgres
+      - key: DB_HOST
+        fromDatabase:
+          name: directus-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: directus-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: directus-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: directus-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: directus-db
+          property: password
+      - key: KEY
+        generateValue: true
+      - key: SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: admin@example.com  # Change this
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - fromGroup: directus-env
+    disks:
+      - name: data
+        mountPath: /directus/database
+        sizeGB: 10
+      - name: uploads
+        mountPath: /directus/uploads
+        sizeGB: 5
+      - name: extensions
+        mountPath: /directus/extensions
+        sizeGB: 1
+    plan: starter  # Or free for testing
+
+databases:
+  - name: directus-db
+    databaseName: directus_data
+    user: directus_user
+
+envVarGroups:
+  - name: directus-env
+    envVars:
+      - key: PUBLIC_URL
+        value: https://your-app.onrender.com
+      - key: WEBSOCKETS_ENABLED
+        value: true
