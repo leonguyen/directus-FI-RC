@@ -1,61 +1,29 @@
 services:
   - type: web
-    name: directus
+    name: directus-app
     env: docker
-    dockerCommand: npx directus bootstrap && npx directus start
+    dockerImage: directus/directus:latest
+    plan: free # Change to 'starter' or higher if you need more resources
+    healthCheckPath: /server/health
     envVars:
+      - key: PORT
+        value: 8055
+      # Directus Database config (SQLite)
       - key: DB_CLIENT
-        value: postgres
-      - key: DB_HOST
-        fromDatabase:
-          name: directus-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: directus-db
-          property: port
-      - key: DB_DATABASE
-        fromDatabase:
-          name: directus-db
-          property: database
-      - key: DB_USER
-        fromDatabase:
-          name: directus-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: directus-db
-          property: password
+        value: sqlite3
+      - key: DB_FILENAME
+        value: /directus/database/data.db
+      # Authentication & Security tokens
       - key: KEY
         generateValue: true
       - key: SECRET
         generateValue: true
+      # Initial Admin Credentials
       - key: ADMIN_EMAIL
-        value: admin@example.com  # Change this
+        value: admin@example.com # Change this
       - key: ADMIN_PASSWORD
-        generateValue: true
-      - fromGroup: directus-env
-    disks:
-      - name: data
-        mountPath: /directus/database
-        sizeGB: 10
-      - name: uploads
-        mountPath: /directus/uploads
-        sizeGB: 5
-      - name: extensions
-        mountPath: /directus/extensions
-        sizeGB: 1
-    plan: starter  # Or free for testing
-
-databases:
-  - name: directus-db
-    databaseName: directus_data
-    user: directus_user
-
-envVarGroups:
-  - name: directus-env
-    envVars:
-      - key: PUBLIC_URL
-        value: https://your-app.onrender.com
-      - key: WEBSOCKETS_ENABLED
-        value: true
+        sync: false # Render will prompt you to type this securely in the UI
+    disk:
+      name: directus-data
+      mountPath: /directus/database
+      sizeGB: 1
