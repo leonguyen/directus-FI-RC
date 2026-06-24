@@ -1,17 +1,16 @@
 FROM directus/directus:latest
 
-# 1. Switch to root to perform administrative actions
 USER root
 
-# 2. Copy the custom entrypoint and make it executable
+# Install dos2unix to clear out hidden Windows carriage returns
+RUN apt-get update && apt-get install -y dos2unix && rm -rf /var/lib/apt/lists/*
+
 COPY docker-entrypoint-custom.sh /docker-entrypoint-custom.sh
-RUN chmod +x /docker-entrypoint-custom.sh
 
-# 3. Ensure the directus user owns the script if they need to read/execute it
-# (The default non-root user in the Directus image is usually 'node')
-RUN chown node:node /docker-entrypoint-custom.sh
+# Convert line endings and make executable
+RUN dos2unix /docker-entrypoint-custom.sh && chmod +x /docker-entrypoint-custom.sh
 
-# 4. Switch back to the non-root user for security
 USER node
 
 ENTRYPOINT ["/docker-entrypoint-custom.sh"]
+
